@@ -1,5 +1,4 @@
 .background-image{
-    width: 100vw;
     height: 100vh;
     background-image: url('../assets/img/background.png');
 }
@@ -7,6 +6,7 @@
 #pageTitle h1{
     font-size: 45px;
     font-family: 'Work Sans', sans-serif;
+    color: #333;
     margin: 0!important;
 }
 
@@ -18,3 +18,5 @@
 .text-bold{
     font-weight: 800;
 }
+
+/* FFFCF9 */

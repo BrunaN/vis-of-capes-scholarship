@@ -1,0 +1,25 @@
+#brMap1 .state {
+    fill: transparent;
+}
+
+#brMap1 .state:hover { fill: #f9f9f9; }
+
+#brMap1 .state_contour {
+    fill: none;
+    stroke: #333;
+    stroke-width: 1;
+    stroke-linejoin: round;
+  }
+
+#lineChart .line {
+    stroke-width: 2.5;
+}
+
+#lineChart .x.axis text, #lineChart .y.axis text{
+    font-size: 12px;
+}
+
+.dc-chart .axis path, .dc-chart .axis line {
+    stroke: #e1e1e1;
+    stroke-width: 1;
+}

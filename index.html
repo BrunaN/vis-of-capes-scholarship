@@ -6,7 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/vis.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/dc@4/dist/style/dc.css"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;800&display=swap" rel="stylesheet">
@@ -20,6 +22,14 @@
                 <h1><span>Visualização das</h1>
                 <h1 class="text-bold title-style">Bolsas da CAPES</h1>
             </div>
+            <div id="map" class="d-flex justify-content-center">
+
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div id="lineChart" class="d-flex justify-content-center">
+
         </div>
     </div>
 
@@ -31,6 +41,11 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/crossfilter.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/dc@4/dist/dc.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <script src="js/main.js" text="text/javascript"></script>
 </body>
 
 </html>
