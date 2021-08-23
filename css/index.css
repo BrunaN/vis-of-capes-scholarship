@@ -1,22 +1,67 @@
-.background-image{
-    height: 100vh;
-    background-image: url('../assets/img/background.png');
+.background-image {
+  height: 100vh;
+  background-image: url('../assets/img/background.png');
+  padding-top: 25px;
 }
 
-#pageTitle h1{
-    font-size: 45px;
-    font-family: 'Work Sans', sans-serif;
-    color: #333;
-    margin: 0!important;
+#pageTitle h1 {
+  font-size: 45px;
+  font-family: 'Work Sans', sans-serif;
+  color: #333;
+  margin: 0 !important;
+  font-weight: 800;
 }
 
-#pageTitle .title-style{
-    line-height: 0.7;
-    margin-left: 25px!important;
+#pageTitle .title-style {
+  line-height: 0.5;
+  margin-left: 25px !important;
+  color: #F0C40F!important;
 }
 
-.text-bold{
-    font-weight: 800;
+
+#timeLine {
+  margin-left: 21.5px;
+  border: #333 solid 1px;
+  border-top: none;
+  display: flex;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 
-/* FFFCF9 */
+.time-line-item {
+  border-right: #333 solid 1px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.time-line-item img {
+  height: 55px;
+  width: 55px;
+  border-radius: 50px;
+}
+
+.time-line-item .infos{
+    margin-top: 5px;
+    text-align: center;
+}
+
+.time-line-item .infos a {
+    text-decoration: none;
+}
+
+#lula {
+  width: 356px !important;
+}
+#dilma {
+  width: 391.32px !important;
+}
+#temer {
+  width: 177.87px !important;
+}
+#bolsonaro {
+  width: 71.15px !important;
+  border-right: none;
+  font-size: 0.9rem;
+}

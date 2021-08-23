@@ -1,25 +1,47 @@
 #brMap1 .state {
-    fill: transparent;
+  fill: transparent;
+  cursor: pointer;
 }
+/* 
+#brMap1 .state:hover, .state_contour {
+  stroke: #333;
+  stroke-width: 2.5;
+} */
 
-#brMap1 .state:hover { fill: #f9f9f9; }
+#brMap1 .state:hover {
+  fill: #333;
+}
 
 #brMap1 .state_contour {
-    fill: none;
-    stroke: #333;
-    stroke-width: 1;
-    stroke-linejoin: round;
-  }
+  fill: none;
+  stroke: #a5a5a5;
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+
+#brMap1 .circle {
+  cursor: pointer;
+  fill: #f0c40f;
+  stroke: #f0c40f;
+  stroke-width: 3;
+  fill-opacity: 0.6;
+}
+
+#brMap1 .circle:hover {
+  fill-opacity: 1;
+}
 
 #lineChart .line {
-    stroke-width: 2.5;
+  stroke-width: 2.5;
 }
 
-#lineChart .x.axis text, #lineChart .y.axis text{
-    font-size: 12px;
+#lineChart .x.axis text,
+#lineChart .y.axis text {
+  font-size: 12px;
 }
 
-.dc-chart .axis path, .dc-chart .axis line {
-    stroke: #e1e1e1;
-    stroke-width: 1;
+.dc-chart .axis path,
+.dc-chart .axis line {
+  stroke: #e1e1e1;
+  stroke-width: 1;
 }
