@@ -1,6 +1,36 @@
 const width = 1000;
 const height = 790;
 
+const ufOptions = {
+  AC: 'Acre',
+  AL: 'Alagoas',
+  AM: 'Amazonas',
+  AP: 'Amapá',
+  BA: 'Bahia',
+  CE: 'Ceará',
+  DF: 'Distrito Federal',
+  ES: 'Espírito Santo',
+  GO: 'Goiás',
+  MA: 'Maranhão',
+  MT: 'Mato Grosso',
+  MS: 'Mato Grosso Sul',
+  MG: 'Minas Gerais',
+  PA: 'Pará',
+  PB: 'Paraíba',
+  PR: 'Paraná',
+  PE: 'Pernambuco',
+  PI: 'Piauí',
+  RJ: 'Rio de Janeiro',
+  RN: 'Rio Grande do Norte',
+  RS: 'Rio Grande do Sul',
+  RO: 'Rondônia',
+  RR: 'Roraima',
+  SC: 'Santa Catarina',
+  SE: 'Sergipe',
+  SP: 'São Paulo',
+  TO: 'Tocantins',
+};
+
 const map = d3
   .select('#map')
   .append('svg')
@@ -21,6 +51,21 @@ let totalByUf = new Map();
 
 let circleScale = d3.scaleLinear().domain([1, 23511]).range([2, 40]);
 
+function showTooltip(id, x, y) {
+  const offset = 10;
+  const tooltip = d3.select('.tooltip-map');
+  tooltip.select('#count').text(totalByUf.get(id));
+  tooltip.select('#name').text(ufOptions[id]);
+  tooltip.classed('hidden', false);
+  const rect = tooltip.node().getBoundingClientRect();
+  const h = rect.height;
+  tooltip.style('left', x + offset + 'px').style('top', y - h + 'px');
+}
+
+function hideTooltip() {
+  d3.select('#tooltip').classed('hidden', true);
+}
+
 Promise.all([
   d3.json('./assets/files/br-states.json'),
   d3.csv('./assets/files/count-by-uf-ano.csv', function (d) {
@@ -38,12 +83,16 @@ function ready([br]) {
     .attr('class', 'state')
     .attr('id', (d) => d.id)
     .attr('d', path)
-    .on('click', (e, d) => {
+    .on('click', function (e, d) {
+      d3.select(this).style('fill', '#333');
+
       g.selectAll('circle')
         .filter(function () {
           return d3.select(this).attr('id') === d.id;
         })
         .style('fill-opacity', '1');
+
+      showTooltip(d.id, e.x, e.y);
     });
 
   g.append('path')
@@ -59,12 +108,16 @@ function ready([br]) {
     .attr('r', (d) => circleScale(totalByUf.get(d.id)))
     .attr('class', 'circle')
     .attr('id', (d) => d.id)
-    .on('click', (e, d) => {
+    .on('click', function (e, d) {
+      d3.select(this).style('fill-opacity', '1');
+
       g.selectAll('.state')
         .filter(function () {
           return d3.select(this).attr('id') === d.id;
         })
         .style('fill', '#333');
+
+      showTooltip(d.id, e.x, e.y);
     });
 }
 
