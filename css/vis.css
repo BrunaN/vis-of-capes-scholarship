@@ -1,15 +1,11 @@
 #brMap1 .state {
   fill: transparent;
   cursor: pointer;
+  transition: fill 0.8s;
 }
-/* 
-#brMap1 .state:hover, .state_contour {
-  stroke: #333;
-  stroke-width: 2.5;
-} */
 
-#brMap1 .state:hover {
-  fill: #333;
+#brMap1 .state:hover, .selected-state {
+  fill: #333!important;
 }
 
 #brMap1 .state_contour {
@@ -25,10 +21,11 @@
   stroke: #f0c40f;
   stroke-width: 3;
   fill-opacity: 0.6;
+  transition: fill-opacity 0.8s;
 }
 
-#brMap1 .circle:hover {
-  fill-opacity: 1;
+#brMap1 .circle:hover, .selected-circle {
+  fill-opacity: 1!important;
 }
 
 .tooltip-map {
@@ -41,7 +38,7 @@
   -moz-border-radius: 10px;
   border-radius: 10px;
   pointer-events: none;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)
 }
 
 .hidden {
