@@ -123,7 +123,7 @@ function regroup(dimension, columns) {
   };
 }
 
-const lineChart = dc.compositeChart('#lineChart');
+const compositeChart = dc.compositeChart('#lineChart');
 const pieChartLevel = dc.pieChart('#pieChartLevel');
 const pieChartStatus = dc.pieChart('#pieChartStatus');
 const barChart = dc.barChart('#barChart');
@@ -234,37 +234,37 @@ d3.csv(
     .scaleTime()
     .domain([yearDimension.bottom(1)[0].ano, yearDimension.top(1)[0].ano]);
 
-  lineChart
+  compositeChart
     .width(1250)
     .height(550)
     .margins({ top: 50, right: 50, bottom: 20, left: 70 })
     .dimension(yearDimension)
     .x(yearScale)
-    .elasticY(false)
+    .elasticY(true)
     .renderHorizontalGridLines(true)
     .brushOn(false)
     .compose([
       dc
-        .lineChart(lineChart)
+        .lineChart(compositeChart)
         .group(masterByYearGroup, 'Mestrado')
         .colors(levelColorScale)
         .curve(d3.curveCardinal)
         .renderDataPoints({ radius: 5, fillOpacity: 1 }),
       dc
-        .lineChart(lineChart)
+        .lineChart(compositeChart)
         .group(doctorateByYearGroup, 'Doutorado')
         .colors(levelColorScale)
         .curve(d3.curveCardinal)
         .renderDataPoints({ radius: 5, fillOpacity: 1 }),
       dc
-        .lineChart(lineChart)
+        .lineChart(compositeChart)
         .group(posDocByYearGroup, 'Pós-doutorado')
         .colors(levelColorScale)
         .curve(d3.curveCardinal)
         .renderDataPoints({ radius: 5, fillOpacity: 1 }),
     ]);
 
-  lineChart.filter = function () {};
+  compositeChart.filter = function () {};
 
   pieChartLevel
     .width(300)
@@ -336,15 +336,24 @@ d3.csv(
       });
     });
 
+  console.log(totalByRegionGroup.top(Infinity));
+
   barChart
-    .width(300)
+    .width(1250)
     .height(360)
     .x(d3.scaleBand())
     .xUnits(dc.units.ordinal)
+    .elasticY(true)
+    .centerBar(false)
+    .renderHorizontalGridLines(true)
     .barPadding(0.1)
     .outerPadding(0.05)
     .dimension(regionDimension)
-    .group(totalByRegionGroup);
+    .group(totalByRegionGroup)
+    .margins({ top: 50, right: 50, bottom: 20, left: 70 })
+    .ordering(function (d) {
+      return -d.value;
+    });
 
   dc.renderAll();
 

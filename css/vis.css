@@ -56,13 +56,13 @@
   stroke-width: 2.5;
 }
 
-#lineChart .x.axis text, #lineChart .y.axis text{
+#lineChart .x.axis text, #lineChart .y.axis text, #barChart .x.axis text, #barChart .y.axis text{
   font-size: 14px!important;
   color: #333;
   font-family: 'Work Sans', sans-serif!important;
 }
 
-#lineChart .y .domain{
+#lineChart .y .domain, #barChart .y .domain{
   stroke: transparent!important;
 }
 
