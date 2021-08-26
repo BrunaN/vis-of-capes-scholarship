@@ -141,7 +141,6 @@ const statusColorScale = d3
 d3.csv(
   'https://raw.githubusercontent.com/JJBarata/capes_dataset/master/dataset_bolsas_capes.csv'
 ).then((data) => {
-  console.log(data);
   data.forEach((d) => {
     d.ano = parseDate(+d.ano);
     d.mestrado = +d.mestrado;
@@ -204,8 +203,6 @@ d3.csv(
     .group()
     .reduceSum((d) => +d.total_linha);
 
-  console.log(totalByRegionGroup.top(Infinity));
-
   let totalDimension = facts.dimension((d) => +d.total_linha);
 
   let totalByUfAndYearGroup = ufAndYearGroup.reduceSum((d) => +d.total_linha);
@@ -213,8 +210,6 @@ d3.csv(
   totalByUfAndYearGroup.top(Infinity).forEach(function (d) {
     totalByUf.set(d.key, +d.value);
   });
-
-  console.log(totalByUf.get(`${format(year)}/${'SP'}`));
 
   let levelsDimension = facts.dimension(function (d) {
     return d;
@@ -336,8 +331,6 @@ d3.csv(
       });
     });
 
-  console.log(totalByRegionGroup.top(Infinity));
-
   barChart
     .width(1250)
     .height(360)
@@ -358,9 +351,6 @@ d3.csv(
   dc.renderAll();
 
   function updateFilters(uf) {
-    console.log('teste');
-
-    console.log(uf);
     ufSelected = uf;
     ufDimension.filter(function (d) {
       return uf === d;
