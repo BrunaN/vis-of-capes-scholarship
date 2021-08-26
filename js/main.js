@@ -1,6 +1,15 @@
 const width = 1000;
 const height = 790;
 
+let format = d3.timeFormat('%Y');
+let parseDate = d3.timeParse('%Y');
+
+let year = parseDate(2020);
+let ufSelected;
+let br;
+
+let circleScale = d3.scaleLinear().domain([1, 23511]).range([2, 40]);
+
 const ufOptions = {
   AC: 'Acre',
   AL: 'Alagoas',
@@ -31,6 +40,12 @@ const ufOptions = {
   TO: 'Tocantins',
 };
 
+const levelsOptions = {
+  mestrado: 'Mestrado',
+  doutorado_pleno: 'Doutorado',
+  pos_doutorado: 'Pós-doutorado',
+};
+
 const map = d3
   .select('#map')
   .append('svg')
@@ -49,12 +64,10 @@ let path = d3.geoPath().projection(projection);
 
 let totalByUf = new Map();
 
-let circleScale = d3.scaleLinear().domain([1, 23511]).range([2, 40]);
-
 function showTooltip(id, x, y) {
   const offset = 10;
   const tooltip = d3.select('.tooltip-map');
-  tooltip.select('#count').text(totalByUf.get(id));
+  tooltip.select('#count').text(totalByUf.get(`${format(year)}/${id}`));
   tooltip.select('#name').text(ufOptions[id]);
   tooltip.classed('hidden', false);
   const rect = tooltip.node().getBoundingClientRect();
@@ -66,99 +79,10 @@ function hideTooltip() {
   d3.select('.tooltip-map').classed('hidden', true);
 }
 
-Promise.all([
-  d3.json('./assets/files/br-states.json'),
-  d3.csv('./assets/files/count-by-uf-ano.csv', function (d) {
-    if (d.ano === '2020') {
-      totalByUf.set(d.uf, +d.total_linha);
-    }
-  }),
-]).then(ready);
-
 function resetMap() {
   d3.selectAll('.state').classed('selected-state', false);
   d3.selectAll('.circle').classed('selected-circle', false);
 }
-
-function ready([br]) {
-  g.selectAll('path')
-    .data(topojson.feature(br, br.objects.estados).features)
-    .enter()
-    .append('path')
-    .attr('class', 'state')
-    .attr('id', (d) => d.id)
-    .attr('d', path)
-    .on('mouseover', function (e, d) {
-      g.selectAll('circle')
-        .filter(function () {
-          return d3.select(this).attr('id') === d.id;
-        })
-        .style('fill-opacity', '1');
-    })
-    .on('mouseout', function (e, d) {
-      g.selectAll('circle')
-        .filter(function () {
-          return d3.select(this).attr('id') === d.id;
-        })
-        .style('fill-opacity', '0.6');
-    })
-    .on('click', function (e, d) {
-      resetMap();
-      d3.select(this).classed('selected-state', true);
-
-      g.selectAll('circle')
-        .filter(function () {
-          return d3.select(this).attr('id') === d.id;
-        })
-        .classed('selected-circle', true);
-
-      showTooltip(d.id, e.x, e.y);
-    });
-
-  g.append('path')
-    .datum(topojson.mesh(br, br.objects.estados))
-    .attr('d', path)
-    .attr('class', 'state_contour');
-
-  g.selectAll('circle')
-    .data(topojson.feature(br, br.objects.estados).features)
-    .enter()
-    .append('circle')
-    .attr('transform', (d) => 'translate(' + path.centroid(d) + ')')
-    .attr('r', (d) => circleScale(totalByUf.get(d.id)))
-    .attr('class', 'circle')
-    .attr('id', (d) => d.id)
-    .on('mouseover', function (e, d) {
-      g.selectAll('.state')
-        .filter(function () {
-          return d3.select(this).attr('id') === d.id;
-        })
-        .style('fill', '#333');
-    })
-    .on('mouseout', function (e, d) {
-      g.selectAll('.state')
-        .filter(function () {
-          return d3.select(this).attr('id') === d.id;
-        })
-        .style('fill', 'transparent');
-    })
-    .on('click', function (e, d) {
-      resetMap();
-      d3.select(this).classed('selected-circle', true);
-
-      g.selectAll('.state')
-        .filter(function () {
-          return d3.select(this).attr('id') === d.id;
-        })
-        .classed('selected-state', true);
-
-      showTooltip(d.id, e.x, e.y);
-    });
-}
-
-const lineChart = dc.compositeChart('#lineChart');
-const pieChartLevel = dc.pieChart('#pieChartLevel');
-const pieChartStatus = dc.pieChart('#pieChartStatus');
 
 function regroup(dimension, columns) {
   let _groupAll = dimension.groupAll().reduce(
@@ -193,20 +117,30 @@ function regroup(dimension, columns) {
   };
 }
 
-levelColorScale = d3
+const lineChart = dc.compositeChart('#lineChart');
+const pieChartLevel = dc.pieChart('#pieChartLevel');
+const pieChartStatus = dc.pieChart('#pieChartStatus');
+
+const levelColorScale = d3
   .scaleOrdinal()
   .domain(['mestrado', 'doutorado_pleno', 'pos_doutorado'])
   .range(['#3263FD', '#FEB865', '#D8584E']);
 
-statusColorScale = d3
+const statusColorScale = d3
   .scaleOrdinal()
   .domain(['Federal', 'Estadual', 'Privada', 'Municipal'])
   .range(['#04A6EA', '#FA8775', '#329694', '#5D5988']);
 
+// Promise.all([
+//   d3.json('./assets/files/br-states.json'),
+//   d3.csv('https://raw.githubusercontent.com/JJBarata/capes_dataset/master/dataset_bolsas_capes.csv'),
+// ]).then(
+//   (a, 2) => {console.log(1,2)}
+// );
+
 d3.csv(
   'https://raw.githubusercontent.com/JJBarata/capes_dataset/master/dataset_bolsas_capes.csv'
 ).then((data) => {
-  let parseDate = d3.timeParse('%Y');
   data.forEach((d) => {
     d.ano = parseDate(+d.ano);
     d.mestrado = +d.mestrado;
@@ -217,36 +151,76 @@ d3.csv(
 
   let facts = crossfilter(data);
 
-  ufDimension = facts.dimension((d) => d.uf);
+  let ufDimension = facts.dimension((d) => d.uf);
 
-  totalDimension = facts.dimension((d) => +d.total_linha);
+  let yearDimension = facts.dimension((d) => d.ano);
 
-  totalByUfGroup = ufDimension.group().reduceSum((d) => d.total_linha);
+  let yearGroup = yearDimension.group();
 
-  yearDimension = facts.dimension((d) => d.ano);
+  select = dc
+    .selectMenu('#menuselect')
+    .dimension(yearDimension)
+    .group(yearGroup)
+    .promptText('De 2003 até 2020')
+    .title(function (d) {
+      return format(d.key);
+    })
+    .controlsUseVisibility(true);
 
-  masterByYearGroup = yearDimension.group().reduceSum((d) => d.mestrado);
+  var oldHandler = select.filterHandler();
+  select.filterHandler(function (dimension, filters) {
+    var parseFilters = filters.map(function (d) {
+      year = new Date(d);
+      return new Date(d);
+    });
 
-  doctorateByYearGroup = yearDimension
+    ready();
+
+    oldHandler(dimension, parseFilters);
+    return filters;
+  });
+
+  let masterByYearGroup = yearDimension.group().reduceSum((d) => d.mestrado);
+
+  let doctorateByYearGroup = yearDimension
     .group()
     .reduceSum((d) => d.doutorado_pleno);
 
-  posDocByYearGroup = yearDimension.group().reduceSum((d) => d.pos_doutorado);
+  let posDocByYearGroup = yearDimension
+    .group()
+    .reduceSum((d) => d.pos_doutorado);
 
-  levelsDimension = facts.dimension(function (d) {
+  let ufAndYearDimension = facts.dimension(function (d) {
+    return `${format(d.ano)}/${d.uf}`;
+  });
+
+  ufAndYearGroup = ufAndYearDimension.group();
+
+  let totalDimension = facts.dimension((d) => +d.total_linha);
+
+  let totalByUfAndYearGroup = ufAndYearGroup.reduceSum((d) => +d.total_linha);
+
+  totalByUfAndYearGroup.top(Infinity).forEach(function (d) {
+    totalByUf.set(d.key, +d.value);
+  });
+
+  console.log(totalByUf.get(`${format(year)}/${'SP'}`));
+
+  let levelsDimension = facts.dimension(function (d) {
     return d;
   });
 
-  levelsGroup = regroup(levelsDimension, [
+  let levelsGroup = regroup(levelsDimension, [
     'mestrado',
     'doutorado_pleno',
     'pos_doutorado',
   ]);
 
-  statusDimension = facts.dimension((d) => d.status_juridico);
-  statusGroup = statusDimension.group().reduceCount();
+  let statusDimension = facts.dimension((d) => d.status_juridico);
 
-  yearScale = d3
+  let statusGroup = statusDimension.group().reduceCount();
+
+  const yearScale = d3
     .scaleTime()
     .domain([yearDimension.bottom(1)[0].ano, yearDimension.top(1)[0].ano]);
 
@@ -256,7 +230,7 @@ d3.csv(
     .margins({ top: 50, right: 50, bottom: 20, left: 70 })
     .dimension(yearDimension)
     .x(yearScale)
-    .elasticY(true)
+    .elasticY(false)
     .renderHorizontalGridLines(true)
     .brushOn(false)
     .compose([
@@ -280,13 +254,29 @@ d3.csv(
         .renderDataPoints({ radius: 5, fillOpacity: 1 }),
     ]);
 
+  lineChart.filter = function () {};
+
   pieChartLevel
-    .width(400)
-    .height(400)
+    .width(300)
+    .height(360)
     .dimension(levelsDimension)
     .group(levelsGroup)
-    .innerRadius(100)
+    .innerRadius(75)
     .colors(levelColorScale)
+    .legend(
+      dc
+        .legend()
+        .y(345)
+        .x(28)
+        .horizontal(true)
+        .highlightSelected(true)
+        .itemHeight(15)
+        .itemWidth(80)
+        .gap(5)
+        .legendText(function (d, i) {
+          return levelsOptions[d.name];
+        })
+    )
     .on('pretransition', function (chart) {
       chart.selectAll('text.pie-slice').text(function (d) {
         return (
@@ -309,12 +299,23 @@ d3.csv(
   });
 
   pieChartStatus
-    .width(400)
-    .height(400)
+    .width(300)
+    .height(360)
     .dimension(statusDimension)
     .group(statusGroup)
-    .innerRadius(100)
+    .innerRadius(75)
     .colors(statusColorScale)
+    .legend(
+      dc
+        .legend()
+        .y(345)
+        .x(15)
+        .horizontal(true)
+        .highlightSelected(true)
+        .itemHeight(15)
+        .itemWidth(70)
+        .gap(5)
+    )
     .on('pretransition', function (chart) {
       chart.selectAll('text.pie-slice').text(function (d) {
         return (
@@ -325,5 +326,109 @@ d3.csv(
       });
     });
 
+  // function updateFilters() {
+  //   yearDimension.filter(function (d) {
+  //     return d === parseDate(2020);
+  //   });
+
+  //   dc.redrawAll();
+  // }
+
+  if (ufSelected) {
+    console.log(ufSelected)
+    ufDimension.filter(function (d) {
+      return ufSelected === d;
+    });
+    dc.redrawAll();
+  }
+
   dc.renderAll();
+
+  console.log(totalByUf);
+
+  select.replaceFilter([[year]]).redrawGroup();
+});
+
+function ready() {
+  g.selectAll('circle').attr('r', (d) =>
+    circleScale(totalByUf.get(`${format(year)}/${d.id}`))
+  );
+}
+
+d3.json('./assets/files/br-states.json').then((data) => {
+  br = data;
+  g.selectAll('path')
+    .data(topojson.feature(br, br.objects.estados).features)
+    .enter()
+    .append('path')
+    .attr('class', 'state')
+    .attr('id', (d) => d.id)
+    .attr('d', path)
+    .on('mouseover', function (e, d) {
+      g.selectAll('circle')
+        .filter(function () {
+          return d3.select(this).attr('id') === d.id;
+        })
+        .style('fill-opacity', '1');
+    })
+    .on('mouseout', function (e, d) {
+      g.selectAll('circle')
+        .filter(function () {
+          return d3.select(this).attr('id') === d.id;
+        })
+        .style('fill-opacity', '0.7');
+    })
+    .on('click', function (e, d) {
+      resetMap();
+      d3.select(this).classed('selected-state', true);
+
+      g.selectAll('circle')
+        .filter(function () {
+          return d3.select(this).attr('id') === d.id;
+        })
+        .classed('selected-circle', true);
+
+      showTooltip(d.id, e.x, e.y);
+    });
+
+  g.append('path')
+    .datum(topojson.mesh(br, br.objects.estados))
+    .attr('d', path)
+    .attr('class', 'state_contour');
+
+  g.selectAll('circle')
+    .data(topojson.feature(br, br.objects.estados).features)
+    .enter()
+    .append('circle')
+    .attr('transform', (d) => 'translate(' + path.centroid(d) + ')')
+    .attr('class', 'circle')
+    .attr('id', (d) => d.id)
+    .on('mouseover', function (e, d) {
+      g.selectAll('.state')
+        .filter(function () {
+          return d3.select(this).attr('id') === d.id;
+        })
+        .style('fill', '#333');
+    })
+    .on('mouseout', function (e, d) {
+      g.selectAll('.state')
+        .filter(function () {
+          return d3.select(this).attr('id') === d.id;
+        })
+        .style('fill', 'transparent');
+    })
+    .on('click', function (e, d) {
+      resetMap();
+      d3.select(this).classed('selected-circle', true);
+
+      g.selectAll('.state')
+        .filter(function () {
+          return d3.select(this).attr('id') === d.id;
+        })
+        .classed('selected-state', true);
+
+      showTooltip(d.id, e.x, e.y);
+
+      ufSelected(d.id);
+    });
 });

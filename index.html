@@ -7,11 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="css/vis.css">
+    <link rel="stylesheet" href="fontawesome-free-5.15.4-web/css/fontawesome.css">
+    <link rel="stylesheet" href="fontawesome-free-5.15.4-web/css/solid.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/dc@4/dist/style/dc.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;800&display=swap" rel="stylesheet">
     <title>Visualização das Bolsas da CAPES</title>
 </head>
 
@@ -19,8 +21,13 @@
     <div class="background-image">
         <div class="container">
             <div id="pageTitle">
-                <h1><span>Visual    ização das</h1>
-                <h1 class="title-style">Bo lsas da CAPES</h1>
+                <h1><span>Visualização das</h1>
+                <h1 class="title-style">Bolsas da CAPES</h1>
+            </div>
+            <div>
+                <div class="col-sm-3 well">
+                    <div id="menuselect" style="float:none;"></div>
+                </div>
             </div>
             <div class="tooltip-map hidden">
                 <h4 id="name"></h4>
@@ -30,10 +37,29 @@
             </div>
 
             <div class="row">
-                <div id="pieChartLevel" class="col-6">
+                <div class="col-6">
+                    <div class="pie-chart">
+                        <div class="title-and-action d-flex justify-content-between">
+                            <h3>Bolsas por nível</h3>
+                            <a href=""><i class="fas fa-redo-alt"></i>
+                                Reiniciar filtro</a>
+                        </div>
+                        <div id="pieChartLevel" class="d-flex justify-content-center">
 
+                        </div>
+                    </div>
                 </div>
-                <div id="pieChartStatus" class="col-6">
+                <div class="col-6">
+                    <div class="pie-chart">
+                        <div class="title-and-action d-flex justify-content-between">
+                            <h3>Bolsas por status jurídico</h3>
+                            <a href=""><i class="fas fa-redo-alt"></i>
+                                Reiniciar filtro</a>
+                        </div>
+                        <div id="pieChartStatus" class="d-flex justify-content-center">
+
+                        </div>
+                    </div>
 
                 </div>
             </div>

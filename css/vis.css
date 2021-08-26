@@ -10,7 +10,7 @@
 
 #brMap1 .state_contour {
   fill: none;
-  stroke: #a5a5a5;
+  stroke: #333;
   stroke-width: 1;
   stroke-linejoin: round;
 }
@@ -20,7 +20,7 @@
   fill: #f0c40f;
   stroke: #f0c40f;
   stroke-width: 3;
-  fill-opacity: 0.6;
+  fill-opacity: 0.7;
   transition: fill-opacity 0.8s;
 }
 
@@ -56,13 +56,17 @@
   stroke-width: 2.5;
 }
 
-#lineChart .x.axis text,
-#lineChart .y.axis text {
-  font-size: 12px;
+#lineChart .x.axis text, #lineChart .y.axis text{
+  font-size: 14px!important;
+  color: #333;
+  font-family: 'Work Sans', sans-serif!important;
 }
 
-.dc-chart .axis path,
-.dc-chart .axis line {
-  stroke: #e1e1e1;
-  stroke-width: 1;
+#lineChart .y .domain{
+  stroke: transparent!important;
+}
+
+.dc-chart .axis path, .dc-chart .axis line {
+  stroke: #e1e1e1!important;
+  stroke-width: 1!important;
 }
