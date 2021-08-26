@@ -332,7 +332,6 @@ d3.csv(
     });
 
   barChart
-    .width(1250)
     .height(360)
     .x(d3.scaleBand())
     .xUnits(dc.units.ordinal)
@@ -343,7 +342,7 @@ d3.csv(
     .outerPadding(0.05)
     .dimension(regionDimension)
     .group(totalByRegionGroup)
-    .margins({ top: 50, right: 50, bottom: 20, left: 70 })
+    .margins({ top: 25, right: 20, bottom: 20, left: 70 })
     .ordering(function (d) {
       return -d.value;
     });
