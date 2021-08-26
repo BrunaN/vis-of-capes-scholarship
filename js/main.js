@@ -64,6 +64,12 @@ let path = d3.geoPath().projection(projection);
 
 let totalByUf = new Map();
 
+function updateCircles() {
+  g.selectAll('circle').attr('r', (d) =>
+    circleScale(totalByUf.get(`${format(year)}/${d.id}`))
+  );
+}
+
 function showTooltip(id, x, y) {
   const offset = 10;
   const tooltip = d3.select('.tooltip-map');
@@ -120,6 +126,7 @@ function regroup(dimension, columns) {
 const lineChart = dc.compositeChart('#lineChart');
 const pieChartLevel = dc.pieChart('#pieChartLevel');
 const pieChartStatus = dc.pieChart('#pieChartStatus');
+const barChart = dc.barChart('#barChart');
 
 const levelColorScale = d3
   .scaleOrdinal()
@@ -131,21 +138,16 @@ const statusColorScale = d3
   .domain(['Federal', 'Estadual', 'Privada', 'Municipal'])
   .range(['#04A6EA', '#FA8775', '#329694', '#5D5988']);
 
-// Promise.all([
-//   d3.json('./assets/files/br-states.json'),
-//   d3.csv('https://raw.githubusercontent.com/JJBarata/capes_dataset/master/dataset_bolsas_capes.csv'),
-// ]).then(
-//   (a, 2) => {console.log(1,2)}
-// );
-
 d3.csv(
   'https://raw.githubusercontent.com/JJBarata/capes_dataset/master/dataset_bolsas_capes.csv'
 ).then((data) => {
+  console.log(data);
   data.forEach((d) => {
     d.ano = parseDate(+d.ano);
     d.mestrado = +d.mestrado;
     d.doutorado_pleno = +d.doutorado_pleno;
     d.pos_doutorado = +d.pos_doutorado;
+    d.regiao = d.regiao;
     d.status_juridico = d.status_juridico;
   });
 
@@ -174,7 +176,7 @@ d3.csv(
       return new Date(d);
     });
 
-    ready();
+    updateCircles();
 
     oldHandler(dimension, parseFilters);
     return filters;
@@ -195,6 +197,14 @@ d3.csv(
   });
 
   ufAndYearGroup = ufAndYearDimension.group();
+
+  let regionDimension = facts.dimension((d) => d.regiao);
+
+  let totalByRegionGroup = regionDimension
+    .group()
+    .reduceSum((d) => +d.total_linha);
+
+  console.log(totalByRegionGroup.top(Infinity));
 
   let totalDimension = facts.dimension((d) => +d.total_linha);
 
@@ -326,109 +336,108 @@ d3.csv(
       });
     });
 
-  // function updateFilters() {
-  //   yearDimension.filter(function (d) {
-  //     return d === parseDate(2020);
-  //   });
+  barChart
+    .width(300)
+    .height(360)
+    .x(d3.scaleBand())
+    .xUnits(dc.units.ordinal)
+    .barPadding(0.1)
+    .outerPadding(0.05)
+    .dimension(regionDimension)
+    .group(totalByRegionGroup);
 
-  //   dc.redrawAll();
-  // }
+  dc.renderAll();
 
-  if (ufSelected) {
-    console.log(ufSelected)
+  function updateFilters(uf) {
+    console.log('teste');
+
+    console.log(uf);
+    ufSelected = uf;
     ufDimension.filter(function (d) {
-      return ufSelected === d;
+      return uf === d;
     });
     dc.redrawAll();
   }
 
-  dc.renderAll();
+  d3.json('./assets/files/br-states.json').then((data) => {
+    br = data;
+    g.selectAll('path')
+      .data(topojson.feature(br, br.objects.estados).features)
+      .enter()
+      .append('path')
+      .attr('class', 'state')
+      .attr('id', (d) => d.id)
+      .attr('d', path)
+      .on('mouseover', function (e, d) {
+        g.selectAll('circle')
+          .filter(function () {
+            return d3.select(this).attr('id') === d.id;
+          })
+          .style('fill-opacity', '1');
+      })
+      .on('mouseout', function (e, d) {
+        g.selectAll('circle')
+          .filter(function () {
+            return d3.select(this).attr('id') === d.id;
+          })
+          .style('fill-opacity', '0.7');
+      })
+      .on('click', function (e, d) {
+        resetMap();
+        d3.select(this).classed('selected-state', true);
 
-  console.log(totalByUf);
+        g.selectAll('circle')
+          .filter(function () {
+            return d3.select(this).attr('id') === d.id;
+          })
+          .classed('selected-circle', true);
+
+        showTooltip(d.id, e.x, e.y);
+        updateFilters(d.id);
+      });
+
+    g.append('path')
+      .datum(topojson.mesh(br, br.objects.estados))
+      .attr('d', path)
+      .attr('class', 'state_contour');
+
+    g.selectAll('circle')
+      .data(topojson.feature(br, br.objects.estados).features)
+      .enter()
+      .append('circle')
+      .attr('transform', (d) => 'translate(' + path.centroid(d) + ')')
+      .attr('class', 'circle')
+      .attr('id', (d) => d.id)
+      .on('mouseover', function (e, d) {
+        g.selectAll('.state')
+          .filter(function () {
+            return d3.select(this).attr('id') === d.id;
+          })
+          .style('fill', '#333');
+      })
+      .on('mouseout', function (e, d) {
+        g.selectAll('.state')
+          .filter(function () {
+            return d3.select(this).attr('id') === d.id;
+          })
+          .style('fill', 'transparent');
+      })
+      .on('click', function (e, d) {
+        resetMap();
+        d3.select(this).classed('selected-circle', true);
+
+        g.selectAll('.state')
+          .filter(function () {
+            return d3.select(this).attr('id') === d.id;
+          })
+          .classed('selected-state', true);
+
+        showTooltip(d.id, e.x, e.y);
+        updateFilters(d.id);
+      });
+
+    updateCircles();
+  });
 
   select.replaceFilter([[year]]).redrawGroup();
-});
-
-function ready() {
-  g.selectAll('circle').attr('r', (d) =>
-    circleScale(totalByUf.get(`${format(year)}/${d.id}`))
-  );
-}
-
-d3.json('./assets/files/br-states.json').then((data) => {
-  br = data;
-  g.selectAll('path')
-    .data(topojson.feature(br, br.objects.estados).features)
-    .enter()
-    .append('path')
-    .attr('class', 'state')
-    .attr('id', (d) => d.id)
-    .attr('d', path)
-    .on('mouseover', function (e, d) {
-      g.selectAll('circle')
-        .filter(function () {
-          return d3.select(this).attr('id') === d.id;
-        })
-        .style('fill-opacity', '1');
-    })
-    .on('mouseout', function (e, d) {
-      g.selectAll('circle')
-        .filter(function () {
-          return d3.select(this).attr('id') === d.id;
-        })
-        .style('fill-opacity', '0.7');
-    })
-    .on('click', function (e, d) {
-      resetMap();
-      d3.select(this).classed('selected-state', true);
-
-      g.selectAll('circle')
-        .filter(function () {
-          return d3.select(this).attr('id') === d.id;
-        })
-        .classed('selected-circle', true);
-
-      showTooltip(d.id, e.x, e.y);
-    });
-
-  g.append('path')
-    .datum(topojson.mesh(br, br.objects.estados))
-    .attr('d', path)
-    .attr('class', 'state_contour');
-
-  g.selectAll('circle')
-    .data(topojson.feature(br, br.objects.estados).features)
-    .enter()
-    .append('circle')
-    .attr('transform', (d) => 'translate(' + path.centroid(d) + ')')
-    .attr('class', 'circle')
-    .attr('id', (d) => d.id)
-    .on('mouseover', function (e, d) {
-      g.selectAll('.state')
-        .filter(function () {
-          return d3.select(this).attr('id') === d.id;
-        })
-        .style('fill', '#333');
-    })
-    .on('mouseout', function (e, d) {
-      g.selectAll('.state')
-        .filter(function () {
-          return d3.select(this).attr('id') === d.id;
-        })
-        .style('fill', 'transparent');
-    })
-    .on('click', function (e, d) {
-      resetMap();
-      d3.select(this).classed('selected-circle', true);
-
-      g.selectAll('.state')
-        .filter(function () {
-          return d3.select(this).attr('id') === d.id;
-        })
-        .classed('selected-state', true);
-
-      showTooltip(d.id, e.x, e.y);
-
-      ufSelected(d.id);
-    });
 });
