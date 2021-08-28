@@ -10,7 +10,20 @@ let arc = d3
   .innerRadius((d) => d.y0 * radius)
   .outerRadius((d) => Math.max(d.y0 * radius, d.y1 * radius - 1));
 
-color = d3.scaleOrdinal(d3.quantize(d3.interpolateRainbow, 12));
+const colors = d3
+  .scaleOrdinal()
+  .domain([1, 12])
+  .range([
+    '#946795',
+    '#D1646B',
+    '#EF4B4E',
+    '#EE7152',
+    '#F6C992',
+    '#945D4E',
+    '#C09651',
+    '#329694',
+    '#717CB3',
+  ]);
 
 const multiLevelChart = d3
   .select('#multiLevelChart')
@@ -26,7 +39,9 @@ let g1 = multiLevelChart
     `translate(${multiLevelWidth / 2},${multiLevelWidth / 2})`
   );
 
-let label = g1
+let pathGroup = g1.append('g');
+
+let labelGroup = g1
   .append('g')
   .attr('pointer-events', 'none')
   .attr('text-anchor', 'middle')
@@ -231,7 +246,7 @@ function fix_tree(tree) {
       value: tree.value - sum,
       depth: tree.depth + 1,
       height: tree.height - 1,
-    }); //Altura e profundidade dos filhos
+    });
     tree.data.children.push(node.data);
     tree.children.push(node);
   }
@@ -243,28 +258,13 @@ function buildMultiLevelChart(yearDimension, yearSelected) {
   prune_tree(root, root.value);
   fix_tree(root);
   root = partition(root);
-  // console.log(root);
 
   const element = multiLevelChart.node();
   element.value = { sequence: [], percentage: 0.0 };
-  // Dimensões do gráficos
 
-  // Definições dos arcos (ângulos)
-
-  // Raiz da árvore
   root.each((d) => (d.current = d));
 
-  // Criando o SVG
-  // const svg = d3
-  //   .create('svg')
-  //   .attr('viewBox', [0, 0, width, width])
-  //   .style('font', '10px sans-serif');
-
-  // Criando um nó SVG para armazenar a sequência dos nós nos eventos do mouse
-
-  // Cria as partes do gráfico (do arco) formatado como um caminho em busca da folha da árvore
-
-  let test = label
+  let label = labelGroup
     .selectAll('text')
     .data(root.descendants().slice(1))
     .join('text')
@@ -273,13 +273,13 @@ function buildMultiLevelChart(yearDimension, yearSelected) {
     .attr('transform', (d) => labelTransform(d.current))
     .text((d) => view_text(d)); // Corta os textos longos.
 
-  let path = g1
+  let path = pathGroup
     .selectAll('path')
     .data(root.descendants().slice(1))
     .join('path')
     .attr('fill', (d) => {
       while (d.depth > 1) d = d.parent;
-      return color(d.data.name);
+      return colors(d.data.name);
     })
     .attr('fill-opacity', (d) =>
       arcVisible(d.current) ? (d.depth % 2 == 0 ? 0.7 : 0.4) : 0
@@ -396,7 +396,7 @@ function buildMultiLevelChart(yearDimension, yearSelected) {
       .attrTween('d', (d) => () => arc(d.current));
 
     // Gerenciamento dos labels de cada path (seção) para apresentar apenas o que é visível na tela
-    test
+    label
       .filter(function (d) {
         return +this.getAttribute('fill-opacity') || labelVisible(d.target);
       })
