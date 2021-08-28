@@ -1,4 +1,4 @@
-const multiLevelWidth = 1200;
+const multiLevelWidth = 900;
 let radius = multiLevelWidth / 6;
 
 let arc = d3
@@ -29,7 +29,7 @@ const multiLevelChart = d3
   .select('#multiLevelChart')
   .append('svg')
   .attr('width', multiLevelWidth)
-  .attr('height', height)
+  .attr('height', 900)
   .style('font', '10px sans-serif');
 
 let g1 = multiLevelChart
@@ -153,12 +153,10 @@ function tree_generator(data, tree, depth) {
 }
 
 function get_tree(d) {
-  console.log(d);
   let tree = {
     name: 'BOLSAS DE FOMENTO À PESQUISA',
     children: [],
   };
-  console.log(tree);
   for (const node of d) {
     tree_generator(node, tree, 0);
   }
@@ -183,12 +181,10 @@ function prune_tree(tree, total) {
   let n_trashold = trashold;
   for (; i < tree.children.length; i++) {
     let percentage = +((100 * +tree.children[i].value) / total).toPrecision(3);
-    // console.log(percentage);
     if (tree.depth >= 3) n_trashold = trashold / 1.5;
     if (percentage <= n_trashold) break;
   }
 
-  // console.log(i);
   while (tree.children.length > i) {
     tree.children.pop();
   }
@@ -239,7 +235,6 @@ function fix_tree(tree) {
   let sum = 0;
   for (const node of tree.children) sum += node.value;
 
-  // console.log(tree.value);
   if (sum < tree.value) {
     let node = create_node_nested({
       parent: tree,
@@ -350,8 +345,6 @@ function buildMultiLevelChart(yearDimension, yearSelected) {
 
   // Função do onClick
   function clicked(event, p) {
-    console.log(p);
-
     if (!arcVisibleWithCenter(p.current)) return;
 
     parent.datum(p.parent || root);
@@ -429,7 +422,7 @@ function buildMultiLevelChart(yearDimension, yearSelected) {
   // Função para tratar strings dos labels dos paths
   function view_text(d) {
     let name = d.data.name;
-    if (d.data.name.length > 30) name = d.data.name.substr(0, 29) + '...';
+    if (d.data.name.length > 20) name = d.data.name.substr(0, 19) + '...';
     if (d.data.value)
       return name.replace('_', ' ').toUpperCase() + ': ' + d.data.value;
     else return name;
