@@ -68,15 +68,8 @@ function updateCircles() {
   );
 }
 
-function resetAll(e) {
-  e.preventDefault();
-  dc.filterAll();
-  dc.renderAll();
-}
-
-const div = d3.select('#ufSelected').style('display', 'none');
-
 function showUfSelected(id) {
+  const div = d3.select('#ufSelected');
   div.select('#ufSelectedQuant').text(totalByUf.get(`${format(year)}/${id}`));
   div.select('#ufSelectedName').text(ufOptions[id]);
   div.style('display', 'block');
@@ -102,8 +95,16 @@ function hideTooltip() {
 }
 
 function resetMap() {
+  d3.select('#ufSelected').style('display', 'none');
   d3.selectAll('.state').classed('selected-state', false);
   d3.selectAll('.circle').classed('selected-circle', false);
+}
+
+function resetAll(e) {
+  e.preventDefault();
+  resetMap();
+  dc.filterAll();
+  dc.renderAll();
 }
 
 function regroup(dimension, columns) {
@@ -376,10 +377,16 @@ d3.csv(
   dc.renderAll();
 
   function updateFilters(uf) {
-    ufSelected = uf;
-    ufDimension.filter(function (d) {
-      return uf === d;
-    });
+    if (ufSelected === uf) {
+      ufSelected = undefined;
+      resetMap();
+      ufDimension.filter(null);
+    } else {
+      ufSelected = uf;
+      ufDimension.filter(function (d) {
+        return uf === d;
+      });
+    }
     dc.redrawAll();
   }
 
@@ -421,8 +428,10 @@ d3.csv(
           })
           .classed('selected-circle', true);
 
+        if (ufSelected !== d.id) {
+          showUfSelected(d.id);
+        }
         updateFilters(d.id);
-        showUfSelected(d.id);
       });
 
     g.append('path')
@@ -467,7 +476,9 @@ d3.csv(
           .classed('selected-state', true);
 
         updateFilters(d.id);
-        showUfSelected(d.id);
+        if (ufSelected !== d.id) {
+          showUfSelected(d.id);
+        }
       });
 
     updateCircles();
