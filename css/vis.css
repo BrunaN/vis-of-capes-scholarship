@@ -9,6 +9,10 @@
   margin-bottom: 12px;
 }
 
+.dc-legend {
+  font-size: 14px !important;
+}
+
 #brMap1 .state {
   fill: transparent;
   cursor: pointer;

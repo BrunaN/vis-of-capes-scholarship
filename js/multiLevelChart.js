@@ -154,7 +154,7 @@ function tree_generator(data, tree, depth) {
 
 function get_tree(d) {
   let tree = {
-    name: 'BOLSAS DE FOMENTO À PESQUISA',
+    name: 'BOLSAS DE FOMENTO',
     children: [],
   };
   for (const node of d) {

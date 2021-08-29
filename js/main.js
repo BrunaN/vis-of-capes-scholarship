@@ -269,12 +269,12 @@ d3.csv(
     .legend(
       dc
         .legend()
-        .y(30)
+        .y(50)
         .x(70)
         .horizontal(true)
         .highlightSelected(true)
         .itemHeight(15)
-        .itemWidth(80)
+        .itemWidth(100)
         .gap(5)
     )
     .compose([
@@ -311,11 +311,10 @@ d3.csv(
       dc
         .legend()
         .y(345)
-        .x(28)
         .horizontal(true)
         .highlightSelected(true)
         .itemHeight(15)
-        .itemWidth(80)
+        .itemWidth(95)
         .gap(5)
         .legendText(function (d, i) {
           return levelsOptions[d.name];
@@ -353,11 +352,10 @@ d3.csv(
       dc
         .legend()
         .y(345)
-        .x(15)
         .horizontal(true)
         .highlightSelected(true)
         .itemHeight(15)
-        .itemWidth(70)
+        .itemWidth(74)
         .gap(5)
     )
     .on('pretransition', function (chart) {
