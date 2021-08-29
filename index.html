@@ -20,13 +20,18 @@
 <body>
     <div class="background-image">
         <div class="container">
-            <div id="pageTitle">
-                <h1><span>Visualização das</h1>
-                <h1 class="title-style">Bolsas da CAPES</h1>
-            </div>
-            <div>
-                <div class="col-sm-3 well">
-                    <div id="menuselect" style="float:none;"></div>
+            <div class="header d-flex justify-content-between">
+                <div id="pageTitle">
+                    <h1><span>Visualização das</h1>
+                    <h1 class="title-style">Bolsas da CAPES</h1>
+                </div>
+                <div class="header-actions">
+                    <div class="fixed">
+                        <h3><i class="fas fa-map-marker-alt"></i></i> Ceará</h3>
+                        <div id="menuselect" style="float:none;"></div>
+                        <a href=""><i class="fas fa-redo-alt"></i>
+                            Reiniciar todos filtros</a>
+                    </div>
                 </div>
             </div>
             <div class="tooltip-map hidden">
@@ -41,7 +46,8 @@
                     <div class="pie-chart">
                         <div class="title-and-action d-flex justify-content-between">
                             <h3>Bolsas por nível</h3>
-                            <a href=""><i class="fas fa-redo-alt"></i>
+                            <a href="javascript:pieChartLevel.filterAll();dc.redrawAll();"><i
+                                    class="fas fa-redo-alt"></i>
                                 Reiniciar filtro</a>
                         </div>
                         <div id="pieChartLevel" class="d-flex justify-content-center">
@@ -53,7 +59,8 @@
                     <div class="pie-chart">
                         <div class="title-and-action d-flex justify-content-between">
                             <h3>Bolsas por status jurídico</h3>
-                            <a href=""><i class="fas fa-redo-alt"></i>
+                            <a href="javascript:pieChartStatus.filterAll();dc.redrawAll();"><i
+                                    class="fas fa-redo-alt"></i>
                                 Reiniciar filtro</a>
                         </div>
                         <div id="pieChartStatus" class="d-flex justify-content-center">
@@ -67,7 +74,7 @@
                 <div class="bar-chart">
                     <div class="title-and-action d-flex justify-content-between">
                         <h3>Bolsas por região</h3>
-                        <a href=""><i class="fas fa-redo-alt"></i>
+                        <a href="javascript:barChart.filterAll();dc.redrawAll();"><i class="fas fa-redo-alt"></i>
                             Reiniciar filtro</a>
                     </div>
                     <div id="barChart" class="d-flex justify-content-center">

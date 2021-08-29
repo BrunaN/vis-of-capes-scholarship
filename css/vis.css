@@ -1,11 +1,21 @@
+.dc-select-menu {
+  width: 100% !important;
+  box-sizing: border-box;
+  padding: 5px !important;
+  border-radius: 8px !important;
+  color: #333 !important;
+  border-color: #333 !important;
+}
+
 #brMap1 .state {
   fill: transparent;
   cursor: pointer;
   transition: fill 0.8s;
 }
 
-#brMap1 .state:hover, .selected-state {
-  fill: #333!important;
+#brMap1 .state:hover,
+.selected-state {
+  fill: #333 !important;
 }
 
 #brMap1 .state_contour {
@@ -24,8 +34,9 @@
   transition: fill-opacity 0.8s;
 }
 
-#brMap1 .circle:hover, .selected-circle {
-  fill-opacity: 1!important;
+#brMap1 .circle:hover,
+.selected-circle {
+  fill-opacity: 1 !important;
 }
 
 .tooltip-map {
@@ -38,7 +49,7 @@
   -moz-border-radius: 10px;
   border-radius: 10px;
   pointer-events: none;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
 .hidden {
@@ -56,17 +67,22 @@
   stroke-width: 2.5;
 }
 
-#lineChart .x.axis text, #lineChart .y.axis text, #barChart .x.axis text, #barChart .y.axis text{
-  font-size: 14px!important;
+#lineChart .x.axis text,
+#lineChart .y.axis text,
+#barChart .x.axis text,
+#barChart .y.axis text {
+  font-size: 14px !important;
   color: #333;
-  font-family: 'Work Sans', sans-serif!important;
+  font-family: 'Work Sans', sans-serif !important;
 }
 
-#lineChart .y .domain, #barChart .y .domain{
-  stroke: transparent!important;
+#lineChart .y .domain,
+#barChart .y .domain {
+  stroke: transparent !important;
 }
 
-.dc-chart .axis path, .dc-chart .axis line {
-  stroke: #e1e1e1!important;
-  stroke-width: 1!important;
+.dc-chart .axis path,
+.dc-chart .axis line {
+  stroke: #e1e1e1 !important;
+  stroke-width: 1 !important;
 }

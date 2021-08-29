@@ -3,6 +3,20 @@
   padding: 25px 0px;
 }
 
+.header-actions {
+  width: 230px;
+}
+
+.fixed {
+  position: fixed;
+  background-color: #fff;
+  border-radius: 20px;
+  box-sizing: border-box;
+  width: 230px;
+  padding: 15px 20px;
+  box-sizing: border-box;
+}
+
 #pageTitle h1 {
   font-size: 45px;
   font-family: 'Work Sans', sans-serif;
@@ -17,7 +31,8 @@
   color: #f0c40f !important;
 }
 
-.pie-chart, .bar-chart {
+.pie-chart,
+.bar-chart {
   background-color: #fff;
   border-radius: 20px;
   box-sizing: border-box;
@@ -37,15 +52,16 @@
   font-weight: 500;
 }
 
-.title-and-action a {
+.title-and-action a,
+.header-actions a {
   text-decoration: none;
   font-size: 18px;
   color: #0008a3;
 }
 
 .bar-chart {
-  max-width: 1284px!important;
-  margin: 10px 0px 25px!important;
+  max-width: 1284px !important;
+  margin: 10px 0px 25px !important;
 }
 
 #timeLine {
