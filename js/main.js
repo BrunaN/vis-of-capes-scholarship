@@ -6,6 +6,7 @@ let parseDate = d3.timeParse('%Y');
 
 let year = parseDate(2020);
 let ufSelected;
+let ufDimensionForClean;
 let br;
 
 const ufOptions = {
@@ -102,6 +103,7 @@ function resetMap() {
 
 function resetAll(e) {
   e.preventDefault();
+  ufDimensionForClean.filter(null);
   resetMap();
   dc.filterAll();
   dc.renderAll();
@@ -177,6 +179,7 @@ d3.csv(
   let facts = crossfilter(data);
 
   let ufDimension = facts.dimension((d) => d.uf);
+  ufDimensionForClean = ufDimension;
 
   let yearDimension = facts.dimension((d) => d.ano);
 
