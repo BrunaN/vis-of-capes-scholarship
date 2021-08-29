@@ -43,7 +43,8 @@
   font-weight: 800;
 }
 
-#pageTitle .title-style {
+#pageTitle .title-style,
+.page-title .title-style {
   line-height: 0.5;
   margin-left: 25px !important;
   color: #f0c40f !important;
@@ -64,7 +65,8 @@
   align-items: center;
 }
 
-.title-and-action h3, .title h3 {
+.title-and-action h3,
+.title h3 {
   margin-bottom: 0;
   color: #333;
   font-weight: 500;
@@ -87,8 +89,13 @@
   margin: 10px 0px 25px !important;
 }
 
-.title{
+.title {
   margin-top: 20px;
+  font-family: 'Work Sans', sans-serif !important;
+}
+
+#lineChartContainer {
+  padding-bottom: 50px;
 }
 
 #timeLine {
@@ -141,4 +148,44 @@
 #bolsonaro {
   width: 66px !important;
   border-right: none;
+}
+
+footer {
+  padding: 30px;
+  font-family: 'Work Sans', sans-serif !important;
+}
+
+footer .links {
+  width: 500px;
+  font-size: 18px;
+}
+
+footer .links a {
+  text-decoration: none;
+  color: #0008a3;
+  font-weight: 500;
+}
+
+footer .links a:hover {
+  color: #f0c40f !important;
+}
+
+.page-title {
+  margin: 15px 0 20px;
+}
+
+.page-title h2 {
+  font-family: 'Work Sans', sans-serif;
+  color: #333;
+  margin: 0 !important;
+  font-weight: 800;
+}
+
+.page-title .title-style {
+  margin-left: 18px !important;
+}
+
+footer h5 {
+  color: #a5a5a5;
+  font-weight: 400;
 }
