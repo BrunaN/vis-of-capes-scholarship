@@ -47,30 +47,28 @@ let labelGroup = g1
   .attr('text-anchor', 'middle')
   .style('user-select', 'none');
 
-// Label central do gráfico que apresenta o título de cada seção
-const label_center_title = multiLevelChart
+const labelCenterTitle = multiLevelChart
   .append('text')
   .attr('text-anchor', 'middle')
   .attr('fill', '#888')
   .style('visibility', 'none');
 
-label_center_title
+labelCenterTitle
   .append('tspan')
-  .attr('class', 'center_title')
+  .attr('class', 'centerTitle')
   .attr('x', multiLevelWidth / 2)
   .attr('y', 430)
   .attr('dy', '1.5em')
   .attr('font-size', '1.7em')
   .text('BOLSAS DE FOMENTO');
 
-// Label central do gráfico que apresenta a porcentagem de cada seção
-const label_p = multiLevelChart
+const labelP = multiLevelChart
   .append('text')
   .attr('text-anchor', 'middle')
   .attr('fill', '#888')
   .style('visibility', 'hidden');
 
-label_p
+labelP
   .append('tspan')
   .attr('class', 'percentage')
   .attr('x', multiLevelWidth / 2)
@@ -79,7 +77,7 @@ label_p
   .attr('font-size', '5em')
   .text('');
 
-label_p
+labelP
   .append('tspan')
   .attr('x', multiLevelWidth / 2)
   .attr('y', multiLevelWidth / 2)
@@ -92,17 +90,14 @@ label_p
   .attr('dy', '2.5em')
   .text('ao total ofertada no Brasil');
 
-// SVG do gráfico
-
-function get_name(data, depth) {
+function getName(data, depth) {
   if (depth == 0) return data.grande_area;
   else if (depth == 1) return data.regiao;
   else if (depth == 2) return data.ies;
   else if (depth == 3) return data.programa;
 }
 
-function tree_generator(data, tree, depth) {
-  //depht: 0)grande área > 1)região > 2)ies > 3)programa > 4)tipos de bolsa
+function treeGenerator(data, tree, depth) {
   let flag = [false, false, false, false, false];
   let size = 3;
 
@@ -115,7 +110,7 @@ function tree_generator(data, tree, depth) {
       case 2 + '-' + data.ies:
       case 3 + '-' + data.programa:
         flag[depth] = true;
-        tree_generator(data, node, ++depth);
+        treeGenerator(data, node, ++depth);
         return;
       case 4 + '-doutorado_pleno':
         node.value += data.doutorado_pleno;
@@ -135,30 +130,30 @@ function tree_generator(data, tree, depth) {
   if (!flag[depth]) {
     if (depth < size) {
       tree.children.push({
-        name: get_name(data, depth),
+        name: getName(data, depth),
         children: [],
       });
     } else
       tree.children.push({
-        name: get_name(data, depth),
+        name: getName(data, depth),
         children: [
           { name: 'doutorado_pleno', value: 0 },
           { name: 'mestrado', value: 0 },
           { name: 'pos_doutorado', value: 0 },
         ],
       });
-    tree_generator(data, tree.children[tree.children.length - 1], ++depth);
+    treeGenerator(data, tree.children[tree.children.length - 1], ++depth);
     return;
   }
 }
 
-function get_tree(d) {
+function getTree(d) {
   let tree = {
     name: 'BOLSAS DE FOMENTO',
     children: [],
   };
   for (const node of d) {
-    tree_generator(node, tree, 0);
+    treeGenerator(node, tree, 0);
   }
   return tree;
 }
@@ -171,18 +166,18 @@ function hierarchy(data) {
   return root;
 }
 
-function prune_tree(tree, total) {
+function pruneTree(tree, total) {
   if (!tree.children) return;
   if (!tree.children[0].children) return;
   let trashold = 0.05;
   let min = Math.min(tree.children.length, trashold);
 
   let i = 0;
-  let n_trashold = trashold;
+  let nTrashold = trashold;
   for (; i < tree.children.length; i++) {
     let percentage = +((100 * +tree.children[i].value) / total).toPrecision(3);
-    if (tree.depth >= 3) n_trashold = trashold / 1.5;
-    if (percentage <= n_trashold) break;
+    if (tree.depth >= 3) nTrashold = trashold / 1.5;
+    if (percentage <= nTrashold) break;
   }
 
   while (tree.children.length > i) {
@@ -190,11 +185,11 @@ function prune_tree(tree, total) {
   }
 
   for (const node of tree.children) {
-    prune_tree(node, total);
+    pruneTree(node, total);
   }
 }
 
-function create_node_nested(params) {
+function createNodeNested(params) {
   if (params.depth == params.depth + params.height) {
     let leaf = d3.hierarchy({ name: 'OUTROS' });
     leaf.parent = params.parent;
@@ -207,36 +202,36 @@ function create_node_nested(params) {
     name: 'OUTROS',
     children: [],
   };
-  let new_tree = hierarchy(data);
-  new_tree.height = params.height;
-  new_tree.depth = params.depth;
-  new_tree.value = params.value;
-  new_tree.parent = params.parent;
-  new_tree.data = data;
-  new_tree.children = [
-    create_node_nested({
-      height: new_tree.height - 1,
-      value: new_tree.value,
-      depth: new_tree.depth + 1,
-      parent: new_tree,
+  let newTree = hierarchy(data);
+  newTree.height = params.height;
+  newTree.depth = params.depth;
+  newTree.value = params.value;
+  newTree.parent = params.parent;
+  newTree.data = data;
+  newTree.children = [
+    createNodeNested({
+      height: newTree.height - 1,
+      value: newTree.value,
+      depth: newTree.depth + 1,
+      parent: newTree,
     }),
   ];
 
-  return new_tree;
+  return newTree;
 }
 
-function fix_tree(tree) {
+function fixTree(tree) {
   if (!tree.children) return;
 
   for (const node of tree.children) {
-    fix_tree(node);
+    fixTree(node);
   }
 
   let sum = 0;
   for (const node of tree.children) sum += node.value;
 
   if (sum < tree.value) {
-    let node = create_node_nested({
+    let node = createNodeNested({
       parent: tree,
       value: tree.value - sum,
       depth: tree.depth + 1,
@@ -248,10 +243,10 @@ function fix_tree(tree) {
 }
 
 function buildMultiLevelChart(yearDimension, yearSelected) {
-  let tree = get_tree(yearDimension.filter(yearSelected).top(Infinity));
+  let tree = getTree(yearDimension.filter(yearSelected).top(Infinity));
   let root = hierarchy(tree);
-  prune_tree(root, root.value);
-  fix_tree(root);
+  pruneTree(root, root.value);
+  fixTree(root);
   root = partition(root);
 
   const element = multiLevelChart.node();
@@ -266,7 +261,7 @@ function buildMultiLevelChart(yearDimension, yearSelected) {
     .attr('dy', '0.35em')
     .attr('fill-opacity', (d) => +labelVisible(d.current))
     .attr('transform', (d) => labelTransform(d.current))
-    .text((d) => view_text(d)); // Corta os textos longos.
+    .text((d) => viewText(d)); // Corta os textos longos.
 
   let path = pathGroup
     .selectAll('path')
@@ -281,7 +276,6 @@ function buildMultiLevelChart(yearDimension, yearSelected) {
     )
     .attr('d', (d) => arc(d.current));
 
-  // Aplica os eventos do mouse
   path
     .filter((d) => d.children)
     .on('click', clicked)
@@ -289,21 +283,20 @@ function buildMultiLevelChart(yearDimension, yearSelected) {
       path.attr('fill-opacity', (d) =>
         arcVisible(d.current) ? (d.depth % 2 == 0 ? 0.7 : 0.4) : 0
       );
-      label_p.style('visibility', 'hidden');
+      labelP.style('visibility', 'hidden');
       path.style('cursor', (d) =>
         arcVisible(d.current) && d.children ? 'pointer' : ''
       );
       element.value = { sequence: [], percentage: 0.0 };
       element.dispatchEvent(new CustomEvent('input'));
-      label_center_title.style('visibility', null);
+      labelCenterTitle.style('visibility', null);
     })
     .on('mouseenter', (event, d) => {
-      //O efeito é aplicado apenas sobre os arc visíveis
       if (arcVisible(d.current)) {
         path.style('cursor', (d) =>
           arcVisible(d.current) && d.children ? 'pointer' : ''
         );
-        label_center_title.style('visibility', 'hidden');
+        labelCenterTitle.style('visibility', 'hidden');
         const sequence = d.ancestors().reverse().slice(1);
         path.attr('fill-opacity', (node) =>
           arcVisible(node.current)
@@ -313,7 +306,7 @@ function buildMultiLevelChart(yearDimension, yearSelected) {
             : 0
         );
         const percentage = ((100 * d.value) / root.value).toPrecision(3);
-        label_p
+        labelP
           .style('visibility', null)
           .select('.percentage')
           .text(percentage + '%');
@@ -322,7 +315,6 @@ function buildMultiLevelChart(yearDimension, yearSelected) {
       }
     });
 
-  // Aplica o title para quando passar o mouse sobre os paths
   path.append('title').text(
     (d) =>
       `${d
@@ -332,9 +324,6 @@ function buildMultiLevelChart(yearDimension, yearSelected) {
         .join('/')}\n${format(d.value)}`
   );
 
-  // Cria os labels para cada path.
-  // Aqui são os nomes de cada seção.
-
   const parent = g1
     .append('circle')
     .datum(root)
@@ -343,7 +332,6 @@ function buildMultiLevelChart(yearDimension, yearSelected) {
     .attr('pointer-events', 'all')
     .on('click', clicked);
 
-  // Função do onClick
   function clicked(event, p) {
     if (!arcVisibleWithCenter(p.current)) return;
 
@@ -364,16 +352,13 @@ function buildMultiLevelChart(yearDimension, yearSelected) {
         })
     );
 
-    // Atualiza o nome central do gráfico para o nome da seção clicada
-    label_center_title
+    labelCenterTitle
       .style('visibility', null)
-      .select('.center_title')
+      .select('.centerTitle')
       .text(p.data.name);
 
-    // Definição da duração do efeito de transição
     const t = g1.transition().duration(1000);
 
-    // Efeito de transição
     path
       .transition(t)
       .tween('data', (d) => {
@@ -388,7 +373,6 @@ function buildMultiLevelChart(yearDimension, yearSelected) {
       )
       .attrTween('d', (d) => () => arc(d.current));
 
-    // Gerenciamento dos labels de cada path (seção) para apresentar apenas o que é visível na tela
     label
       .filter(function (d) {
         return +this.getAttribute('fill-opacity') || labelVisible(d.target);
@@ -398,7 +382,6 @@ function buildMultiLevelChart(yearDimension, yearSelected) {
       .attrTween('transform', (d) => () => labelTransform(d.current));
   }
 
-  // Verifica quais paths são visíveis
   function arcVisible(d) {
     return d.y1 <= 3 && d.y0 >= 1 && d.x1 > d.x0;
   }
@@ -407,35 +390,23 @@ function buildMultiLevelChart(yearDimension, yearSelected) {
     return d.y1 <= 3 && d.y0 >= 0 && d.x1 > d.x0;
   }
 
-  // Verifica quais labels de paths são visíveis
   function labelVisible(d) {
     return d.y1 <= 3 && d.y0 >= 1 && (d.y1 - d.y0) * (d.x1 - d.x0) > 0.03;
   }
 
-  // Transformação dos ângulos dos labels dos paths
   function labelTransform(d) {
     const x = (((d.x0 + d.x1) / 2) * 180) / Math.PI;
     const y = ((d.y0 + d.y1) / 2) * radius;
     return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
   }
 
-  // Função para tratar strings dos labels dos paths
-  function view_text(d) {
+  function viewText(d) {
     let name = d.data.name;
     if (d.data.name.length > 20) name = d.data.name.substr(0, 19) + '...';
     if (d.data.value)
       return name.replace('_', ' ').toUpperCase() + ': ' + d.data.value;
     else return name;
   }
-
-  // function partition(data) {
-  //   const root = d3.hierarchy(data)
-  //       .sum(d => d.value)
-  //       .sort((a, b) => b.value - a.value);
-  //   return d3.partition()
-  //       .size([2 * Math.PI, root.height + 1])
-  //     (root);
-  // }
 
   function partition(root) {
     return d3.partition().size([2 * Math.PI, root.height + 1])(root);
