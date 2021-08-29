@@ -10,6 +10,8 @@ let ufDimensionForClean;
 let yearDimensionForClean;
 let br;
 
+let alert = d3.selectAll('.alert').style('display', 'none');
+
 const ufOptions = {
   AC: 'Acre',
   AL: 'Alagoas',
@@ -198,6 +200,10 @@ d3.csv(
 
   var oldHandler = select.filterHandler();
   select.filterHandler(function (dimension, filters) {
+    if (filters.length < 1) {
+      alert.style('display', 'block');
+    } else alert.style('display', 'none');
+    
     var parseFilters = filters.map(function (d) {
       year = new Date(d);
       return new Date(d);

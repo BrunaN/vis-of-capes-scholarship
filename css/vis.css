@@ -92,3 +92,7 @@
   stroke: #e1e1e1 !important;
   stroke-width: 1 !important;
 }
+
+#multiLevelChart{
+  margin-bottom: 16px;
+}
