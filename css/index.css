@@ -171,7 +171,7 @@ footer .links a:hover {
 }
 
 .page-title {
-  margin: 15px 0 20px;
+  margin: 4px 0 20px;
 }
 
 .page-title h2 {
@@ -188,4 +188,9 @@ footer .links a:hover {
 footer h5 {
   color: #a5a5a5;
   font-weight: 400;
+}
+
+hr.solid {
+  width: 100%;
+  border-top: 1px solid #a5a5a5;
 }
