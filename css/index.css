@@ -4,7 +4,7 @@
 }
 
 .header-actions {
-  width: 230px;
+  width: 300px;
 }
 
 .fixed {
@@ -12,15 +12,18 @@
   background-color: #fff;
   border-radius: 20px;
   box-sizing: border-box;
-  width: 230px;
+  width: 300px;
   padding: 15px 20px;
   box-sizing: border-box;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  text-align: center;
 }
 
-.fixed h3 {
+.fixed h3,
+.fixed h5 {
   color: #333;
   margin: 0 !important;
+  text-align: left;
 }
 
 #pageTitle h1 {

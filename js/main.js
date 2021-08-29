@@ -68,7 +68,19 @@ function updateCircles() {
   );
 }
 
-function showUfSelected(id) {}
+function resetAll(e) {
+  e.preventDefault();
+  dc.filterAll();
+  dc.renderAll();
+}
+
+const div = d3.select('#ufSelected').style('display', 'none');
+
+function showUfSelected(id) {
+  div.select('#ufSelectedQuant').text(totalByUf.get(`${format(year)}/${id}`));
+  div.select('#ufSelectedName').text(ufOptions[id]);
+  div.style('display', 'block');
+}
 
 function showTooltip(id, x, y) {
   const offset = 10;
@@ -389,7 +401,6 @@ d3.csv(
 
         const rect = this.getBoundingClientRect();
         showTooltip(d.id, rect.x, rect.y);
-        updateFilters(d.id);
       })
       .on('mouseout', function (e, d) {
         g.selectAll('circle')
@@ -409,6 +420,9 @@ d3.csv(
             return d3.select(this).attr('id') === d.id;
           })
           .classed('selected-circle', true);
+
+        updateFilters(d.id);
+        showUfSelected(d.id);
       });
 
     g.append('path')
@@ -426,7 +440,6 @@ d3.csv(
       .on('mouseover', function (e, d) {
         const rect = this.getBoundingClientRect();
         showTooltip(d.id, rect.x, rect.y);
-        updateFilters(d.id);
 
         g.selectAll('.state')
           .filter(function () {
@@ -452,6 +465,9 @@ d3.csv(
             return d3.select(this).attr('id') === d.id;
           })
           .classed('selected-state', true);
+
+        updateFilters(d.id);
+        showUfSelected(d.id);
       });
 
     updateCircles();
