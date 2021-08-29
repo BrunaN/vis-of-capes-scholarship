@@ -15,6 +15,12 @@
   width: 230px;
   padding: 15px 20px;
   box-sizing: border-box;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.fixed h3 {
+  color: #333;
+  margin: 0 !important;
 }
 
 #pageTitle h1 {
@@ -59,6 +65,11 @@
   color: #0008a3;
 }
 
+.title-and-action a:hover,
+.header-actions a:hover {
+  color: #f0c40f !important;
+}
+
 .bar-chart {
   max-width: 1284px !important;
   margin: 10px 0px 25px !important;
@@ -97,6 +108,9 @@
   text-decoration: none;
   font-size: 18px;
   color: #0008a3;
+}
+.time-line-item .infos a:hover {
+  color: #f0c40f !important;
 }
 
 #lula {

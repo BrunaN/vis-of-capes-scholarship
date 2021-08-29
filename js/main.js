@@ -8,8 +8,6 @@ let year = parseDate(2020);
 let ufSelected;
 let br;
 
-let circleScale = d3.scaleLinear().domain([1, 23511]).range([2, 40]);
-
 const ufOptions = {
   AC: 'Acre',
   AL: 'Alagoas',
@@ -70,6 +68,8 @@ function updateCircles() {
   );
 }
 
+function showUfSelected(id) {}
+
 function showTooltip(id, x, y) {
   const offset = 10;
   const tooltip = d3.select('.tooltip-map');
@@ -77,7 +77,11 @@ function showTooltip(id, x, y) {
   tooltip.select('#name').text(ufOptions[id]);
   tooltip.classed('hidden', false);
   const rect = tooltip.node().getBoundingClientRect();
+  const w = rect.width;
   const h = rect.height;
+  if (x + offset + w > width) {
+    x = x - w;
+  }
   tooltip.style('left', x + offset + 'px').style('top', y - h + 'px');
 }
 
@@ -122,6 +126,8 @@ function regroup(dimension, columns) {
     },
   };
 }
+
+let circleScale = d3.scaleLinear().domain([1, 23511]).range([2, 40]);
 
 const compositeChart = dc.compositeChart('#lineChart');
 const pieChartLevel = dc.pieChart('#pieChartLevel');
@@ -380,6 +386,10 @@ d3.csv(
             return d3.select(this).attr('id') === d.id;
           })
           .style('fill-opacity', '1');
+
+        const rect = this.getBoundingClientRect();
+        showTooltip(d.id, rect.x, rect.y);
+        updateFilters(d.id);
       })
       .on('mouseout', function (e, d) {
         g.selectAll('circle')
@@ -387,6 +397,8 @@ d3.csv(
             return d3.select(this).attr('id') === d.id;
           })
           .style('fill-opacity', '0.7');
+
+        hideTooltip();
       })
       .on('click', function (e, d) {
         resetMap();
@@ -397,9 +409,6 @@ d3.csv(
             return d3.select(this).attr('id') === d.id;
           })
           .classed('selected-circle', true);
-
-        showTooltip(d.id, e.x, e.y);
-        updateFilters(d.id);
       });
 
     g.append('path')
@@ -415,6 +424,10 @@ d3.csv(
       .attr('class', 'circle')
       .attr('id', (d) => d.id)
       .on('mouseover', function (e, d) {
+        const rect = this.getBoundingClientRect();
+        showTooltip(d.id, rect.x, rect.y);
+        updateFilters(d.id);
+
         g.selectAll('.state')
           .filter(function () {
             return d3.select(this).attr('id') === d.id;
@@ -427,6 +440,8 @@ d3.csv(
             return d3.select(this).attr('id') === d.id;
           })
           .style('fill', 'transparent');
+
+        hideTooltip();
       })
       .on('click', function (e, d) {
         resetMap();
@@ -437,9 +452,6 @@ d3.csv(
             return d3.select(this).attr('id') === d.id;
           })
           .classed('selected-state', true);
-
-        showTooltip(d.id, e.x, e.y);
-        updateFilters(d.id);
       });
 
     updateCircles();

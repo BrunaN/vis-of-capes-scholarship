@@ -58,10 +58,10 @@ label_center_title
   .append('tspan')
   .attr('class', 'center_title')
   .attr('x', multiLevelWidth / 2)
-  .attr('y', multiLevelWidth / 2)
+  .attr('y', 430)
   .attr('dy', '1.5em')
   .attr('font-size', '1.7em')
-  .text('BOLSAS DE FOMENTO À PESQUISA');
+  .text('BOLSAS DE FOMENTO');
 
 // Label central do gráfico que apresenta a porcentagem de cada seção
 const label_p = multiLevelChart

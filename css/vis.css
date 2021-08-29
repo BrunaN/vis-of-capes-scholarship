@@ -1,3 +1,7 @@
+#ufSelected {
+  display: none ;
+}
+
 .dc-select-menu {
   width: 100% !important;
   box-sizing: border-box;
@@ -5,6 +9,8 @@
   border-radius: 8px !important;
   color: #333 !important;
   border-color: #333 !important;
+  margin-top: 8px;
+  margin-bottom: 12px;
 }
 
 #brMap1 .state {
