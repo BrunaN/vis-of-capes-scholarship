@@ -194,3 +194,9 @@ hr.solid {
   width: 100%;
   border-top: 1px solid #a5a5a5;
 }
+
+@media only screen and (max-width: 1400px) {
+  #timeLine {
+    display: none;
+  }
+}

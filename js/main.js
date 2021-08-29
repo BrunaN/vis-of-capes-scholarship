@@ -264,6 +264,7 @@ d3.csv(
     .dimension(yearDimension)
     .x(yearScale)
     .elasticY(true)
+    .elasticX(true)
     .renderHorizontalGridLines(true)
     .brushOn(false)
     .legend(
@@ -498,3 +499,7 @@ d3.csv(
 
   select.replaceFilter([[year]]).redrawGroup();
 });
+
+if (window.matchMedia('screen and (max-width: 1400px)').matches) {
+  compositeChart.width(1090);
+}
