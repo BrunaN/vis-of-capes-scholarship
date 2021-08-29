@@ -266,6 +266,17 @@ d3.csv(
     .elasticY(true)
     .renderHorizontalGridLines(true)
     .brushOn(false)
+    .legend(
+      dc
+        .legend()
+        .y(30)
+        .x(70)
+        .horizontal(true)
+        .highlightSelected(true)
+        .itemHeight(15)
+        .itemWidth(80)
+        .gap(5)
+    )
     .compose([
       dc
         .lineChart(compositeChart)
